@@ -50,4 +50,5 @@ def merge_csv():
 #    clean_csv(day)
 
 
+#C:/Users/asus/Desktop/Poli/fantasy-football/dataset/played_matches.csv
 merge_csv()
