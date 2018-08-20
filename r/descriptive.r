@@ -5,6 +5,8 @@ aggregate(as.numeric(as.character(all_days$Voto)), by=list(all_days$Nome),FUN=me
 #Not totally useless, however, since it could represent the mark taken by player 
 #when he plays
 presenze<-table(all_days$Nome)
+#Necessary to edit
 as.data.frame(presenze)
+
+#Append to variance (table) the second row of variable "presenze"
 variance<-cbind(variance,presenze[,2])
-#those indicators refer to voto, not to fantavoto

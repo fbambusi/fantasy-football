@@ -2,6 +2,9 @@ from download_dataset import *
 BONUS_GOAL=3
 MALUS_GOAL=-1
 BONUS_ASSIST=1
+SCORED_PENALTY_BONUS=3
+SAVED_PENALTY_BONUS=3
+MISSED_PENALTY_MALUS=-3
 
 import csv
 import csv
@@ -19,6 +22,9 @@ with open(FULL_DATASET_NAME,'r') as csvinput:
 
         for row in reader:
             fantasy_evaluation=float(row["Voto"])+BONUS_GOAL*float(row['Gf'])+MALUS_GOAL*float(row['Gs'])+BONUS_ASSIST*float(row['Ass'])
+            fantasy_evaluation+=SAVED_PENALTY_BONUS*float(row["Rp"])
+            fantasy_evaluation+=MISSED_PENALTY_MALUS*float(row["Rs"])
+            fantasy_evaluation+=SCORED_PENALTY_BONUS*float(row["Rf"])
             row["FantasyEvaluation"]=fantasy_evaluation
             all.append(row)
 
