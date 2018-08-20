@@ -7,8 +7,10 @@ import csv
 EXCEL_NAME="dataset/day"
 CSV_NAME="dataset/day"
 FULL_DATASET_NAME="dataset/all_days.csv"
+TMP_DATASET_NAME="dataset/all_days_tmp.csv"
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
+SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"]
 def csv_from_excel(number_of_day):
     wb = xlrd.open_workbook(EXCEL_NAME+'.xlsx')
     sh = wb.sheet_by_name(SHEET_NAME)
@@ -51,4 +53,4 @@ def merge_csv():
 
 
 #C:/Users/asus/Desktop/Poli/fantasy-football/dataset/played_matches.csv
-merge_csv()
+#merge_csv()
