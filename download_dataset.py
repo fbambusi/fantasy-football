@@ -11,6 +11,11 @@ TMP_DATASET_NAME="dataset/all_days_tmp.csv"
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
 SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"]
+
+SYNTHESIS_KEYS=["Name","VarianceFantasyEvaluation","PlayedMatches","MeanFantasyEvaluation"]
+TEAM_NAME="dataset/player_teams.csv"
+SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
+
 def csv_from_excel(number_of_day):
     wb = xlrd.open_workbook(EXCEL_NAME+'.xlsx')
     sh = wb.sheet_by_name(SHEET_NAME)
