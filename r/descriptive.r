@@ -11,3 +11,4 @@ as.data.frame(presenze)
 #Append to variance (table) the second row of variable "presenze"
 variance<-cbind(variance,presenze[,2])
 
+#select by role
