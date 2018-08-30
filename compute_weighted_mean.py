@@ -5,7 +5,7 @@ def assign_team():
    
 
 
-    player_synthesis_file=open(PLAYER_SYNTHESIS,"r")
+    player_synthesis_file=open(SYNTHESIS_FILE_NAME,"r")
     player_reader=csv.DictReader(player_synthesis_file)
 
     csvoutput=open(TMP_DATASET_NAME, 'w')
