@@ -8,11 +8,22 @@ EXCEL_NAME="dataset/day"
 CSV_NAME="dataset/day"
 FULL_DATASET_NAME="dataset/all_days.csv"
 TMP_DATASET_NAME="dataset/all_days_tmp.csv"
+BASIC_FANGAZZETTA_EVALUATIONS="dataset/player_synthesis_by_fantagazzetta.csv"
+PLAYER_SYNTHESIS="dataset/players_synthesis_by_me.csv"
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
 SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"]
 
+
 SYNTHESIS_KEYS=["Name","VarianceFantasyEvaluation","PlayedMatches","MeanFantasyEvaluation"]
+SYNTHESIS_KEYS_ROLE=SYNTHESIS_KEYS
+SYNTHESIS_KEYS_ROLE.append("Team")
+SYNTHESIS_KEYS_ROLE.append("Role")
+
+SYNTHESIS_KEYS_WEIGHTED=SYNTHESIS_KEYS_ROLE
+SYNTHESIS_KEYS_WEIGHTED.append("MedianFantasyEvaluation")
+SYNTHESIS_KEYS_WEIGHTED.append("WeightedFantasyEvaluation")
+
 TEAM_NAME="dataset/player_teams.csv"
 SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
 
