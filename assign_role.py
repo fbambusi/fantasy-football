@@ -6,12 +6,12 @@ def assign_team():
     team_reader=csv.DictReader(player_team_file)
 
 
-    player_synthesis_file=open(SYNTHESIS_FILE_NAME,"r")
+    player_synthesis_file=open(PLAYER_SYNTHESIS,"r")
     player_reader=csv.DictReader(player_synthesis_file)
 
     csvoutput=open(TMP_DATASET_NAME, 'w')
 
-    keys=SYNTHESIS_KEYS_ROLE
+    keys=SYNTHESIS_KEYS_RECENT
     writer = csv.DictWriter(csvoutput, quoting=csv.QUOTE_ALL, lineterminator='\n',fieldnames=keys)
 
     all=[]

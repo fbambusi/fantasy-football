@@ -8,10 +8,12 @@ EXCEL_NAME="dataset/day"
 CSV_NAME="dataset/day"
 FULL_DATASET_NAME="dataset/all_days.csv"
 TMP_DATASET_NAME="dataset/all_days_tmp.csv"
-BASIC_FANGAZZETTA_EVALUATIONS="dataset/player_synthesis_by_fantagazzetta.csv"
+BASIC_FANGAZZETTA_EVALUATIONS="dataset/quotazioni.csv"
 PLAYER_SYNTHESIS="dataset/players_synthesis_by_me.csv"
 TEAM_NAME="dataset/player_teams.csv"
 SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
+SYNTHESIS_QUOTATION_FILE="dataset/synthesis_with_quotations.csv"
+
 
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
@@ -26,6 +28,12 @@ SYNTHESIS_KEYS_ROLE.append("Role")
 SYNTHESIS_KEYS_WEIGHTED=SYNTHESIS_KEYS_ROLE
 SYNTHESIS_KEYS_WEIGHTED.append("MedianFantasyEvaluation")
 SYNTHESIS_KEYS_WEIGHTED.append("WeightedFantasyEvaluation")
+
+
+SYNTHESIS_KEYS_RECENT=SYNTHESIS_KEYS_WEIGHTED
+SYNTHESIS_KEYS_RECENT.append("Qt..A")
+SYNTHESIS_KEYS_RECENT.append("Qt..I")
+SYNTHESIS_KEYS_RECENT.append("Plays2018_2019")
 
 
 def csv_from_excel(number_of_day):

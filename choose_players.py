@@ -14,13 +14,12 @@ class Selection:
 		self.normal["C"]=midfielders
 		self.normal["A"]=attackers
 		self.normal["P"]=1
-		self.normal["COACH"]=0
 		self.max={}
 		self.max["D"]=8
 		self.max["C"]=8
 		self.max["A"]=8
 		self.max["P"]=3
-		self.max["COACH"]=0
+		#self.max["COACH"]=0
 		
 		self.players={"A":[],"C":[],"D":[],"COACH":[],"P":[]}
 
@@ -49,8 +48,10 @@ class Selection:
 		tmp_role=""
 		for role in self.max.keys():
 			curr_player=best_player_by_role(players,role)
+			print(curr_player)
 			curr_probability_to_play=self.probability_to_play(role,len(self.players[role]))
 			curr_score=curr_probability_to_play*float(curr_player["WeightedFantasyEvaluation"])
+
 			if curr_score>tmp_best_score and len(self.players[role])<self.max[role]:
 				tmp_best_score=curr_score
 				tmp_best_player=curr_player
@@ -95,6 +96,7 @@ def best_player_by_role(players,role):
 	for player in players:
 		if player["Role"]==role:
 			return player
+	print("NNNNOOOOOO"+role)
 
 def remove_by_surname(players,surname):
 	for item in players:
@@ -154,7 +156,15 @@ players=get_players()
 
 players = sorted(players, key=itemgetter('WeightedFantasyEvaluation'),reverse=True) 
 
+all=[]
+for player in players:
+	if float(player["Plays2018_2019"])==1:
+		all.append(player)
+		
+players=all
+print(len(players))
 command=""
+print("Scrivi qlcs")
 while command!= "q":
 	command=sys.stdin.readline()
 	command=command.strip()
