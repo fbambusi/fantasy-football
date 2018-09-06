@@ -21,7 +21,7 @@ class Selection:
 		self.max["P"]=3
 		#self.max["COACH"]=0
 		
-		self.players={"A":[],"C":[],"D":[],"COACH":[],"P":[]}
+		self.players={"A":[],"C":[],"D":[],"P":[]}
 
 	def add_player(self,players):
 		cont=0
@@ -30,6 +30,8 @@ class Selection:
 		self.players[players[cont]["Role"]].append(players[cont])
 		return players[cont+1:]
 
+	def add_player_object(self,player):
+		self.players[player["Role"]].append(player)
 
 	#Positions start at 0
 	def probability_to_play(self,role,position):
@@ -48,7 +50,6 @@ class Selection:
 		tmp_role=""
 		for role in self.max.keys():
 			curr_player=best_player_by_role(players,role)
-			print(curr_player)
 			curr_probability_to_play=self.probability_to_play(role,len(self.players[role]))
 			curr_score=curr_probability_to_play*float(curr_player["WeightedFantasyEvaluation"])
 
@@ -68,6 +69,23 @@ class Selection:
 				pos=pos+1
 		return value
 
+	def value_of_zone(self,zone):
+		value=0
+		for player in self.players[role]:
+				value=value+self.probability_to_play(role,pos)*float(player["WeightedFantasyEvaluation"])
+				pos=pos+1
+		return value
+	def avg_value_zone(self,zone):
+		value=0
+		pos=0
+		for player in self.players[zone]:
+				value=value+self.probability_to_play(zone,pos)*float(player["WeightedFantasyEvaluation"])
+				pos=pos+1
+		if len(self.players[zone])>0:
+			return value/len(self.players[zone])
+		else:
+			return 0
+
 	def fill(self,players):
 		number_of_players=0
 		players_copy=copy.copy(players)
@@ -84,6 +102,27 @@ class Selection:
 		for zone in self.players:
 			for attacker in self.players[zone]:
 				print(attacker["Name"]+"   "+attacker["WeightedFantasyEvaluation"]+"   "+ attacker["Role"])
+
+class Competitor:
+	def __init__(self,name,selection,budget):
+		self.budget=budget
+		self.selection=selection
+		self.name=name
+		self.prices={"A":0,"D":0,"C":0,"P":0}
+
+	def  buy(self,player,cost):
+		self.budget=self.budget-cost
+		self.selection.add_player_object(player)
+		self.prices[player["Role"]]=self.prices[player["Role"]]+cost
+	def show(self):
+		print("Competitor: "+self.name)
+		print("Money: "+str(self.budget))
+		for zone in self.selection.players.keys():
+			print("Zone: "+zone)
+			print("Cost: "+str(self.prices[zone]))
+			print("Avg value: "+str(self.selection.avg_value_zone(zone)))
+
+
 
 def  get_players():
 	attackers_file=open(PLAYER_SYNTHESIS)
@@ -103,8 +142,11 @@ def remove_by_surname(players,surname):
 		if item["Name"]==surname:
 			players.remove(item)
 
-
-
+def get_by_surname(players,surname):
+	for item in players:
+		if item["Name"]==surname:
+			return item
+	print("PLAYER NOT FOUND   "+surname )
 
 
 
@@ -152,18 +194,48 @@ def init():
 	modules[0].show_players()
 	return modules
 
+def store(players,version):
+	csvoutput=open("dataset/bid/version"+str(version)+".csv", 'w')
+	keys=BID_HEADERS
+	writer = csv.DictWriter(csvoutput, quoting=csv.QUOTE_ALL, lineterminator='\n',fieldnames=keys)
+	all=[]
+	row={}
+	for key in keys:
+	    row[key]=key
+	all.append(row)
+	for player in players:
+		all.append(player)
+	writer.writerows(all)
+	csvoutput.close()
+
 players=get_players()
 
 players = sorted(players, key=itemgetter('WeightedFantasyEvaluation'),reverse=True) 
 
+
+
+fake_sel=Selection(8,8,8)
+competitors={}
+competitors["BRYAN"]=Competitor("BRYAN",copy.deepcopy(fake_sel),500)
+competitors["GATTI"]=Competitor("GATTI",copy.deepcopy(fake_sel),500)
+competitors["VE"]=Competitor("VE",copy.deepcopy(fake_sel),500)
+
+
 all=[]
 for player in players:
-	if float(player["Plays2018_2019"])==1:
+	if float(player["Plays2018_2019"])==1 and (player["Owner"]==None or player["Owner"]==""):
 		all.append(player)
-		
-players=all
-print(len(players))
+	
+	if player["Owner"]!=None and player["Owner"]!="ME" and player["Owner"]!="":
+		competitors[player["Owner"]].buy(player,float(player["Price"]))
+
+players=copy.copy(all)
+
+#===========================================================================================
+#=========================================MAIN==============================================
+#===========================================================================================
 command=""
+counter=0
 print("Scrivi qlcs")
 while command!= "q":
 	command=sys.stdin.readline()
@@ -176,7 +248,35 @@ while command!= "q":
 		print(who)
 		remove_by_surname(players,who)
 		init()
+	if command=="buy" or command=="b":
+		print("Owner:")
+		owner=sys.stdin.readline()
+		owner=owner.strip()
+		owner=owner.upper()
+		print("Player:")
+		player=sys.stdin.readline()
+		player=player.strip()
+		player=player.upper()
+		print("Price:")
+		price=sys.stdin.readline()
+		price=price.strip()
+		price=price.upper()
+		player_obj=get_by_surname(players,player)
+		competitors[owner].buy(player_obj,float(price))
+		remove_by_surname(players,player)
+		player_obj["Price"]=price
+		player_obj["Owner"]=owner
+		competitors[owner].show()
 
-
-
-
+	if command=="display" or command=="d":
+		print("Owner:")
+		owner=sys.stdin.readline()
+		owner=owner.strip()
+		owner=owner.upper()
+		competitors[owner].show()
+	if command=="compute" or command=="c":
+		init()
+	if command=="store" or command=="s":
+		store(all,counter)
+		counter=counter+1
+	
