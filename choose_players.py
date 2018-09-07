@@ -32,6 +32,8 @@ class Selection:
 
 	def add_player_object(self,player):
 		self.players[player["Role"]].append(player)
+		self.players[player["Role"]]=sorted(self.players[player["Role"]],key=lambda x:x["WeightedFantasyEvaluation"])
+		print("Adding "+player["Name"])
 
 	#Positions start at 0
 	def probability_to_play(self,role,position):
@@ -45,6 +47,7 @@ class Selection:
 			return tot_prob
 
 	def add_best_player(self,players):
+
 		tmp_best_player={}
 		tmp_best_score=-10
 		tmp_role=""
@@ -87,13 +90,29 @@ class Selection:
 			return 0
 
 	def fill(self,players):
+	
+		self.show_players()
+		self.clear_not_fixed()
+		
 		number_of_players=0
 		players_copy=copy.copy(players)
 		for role in self.max.values():
 			number_of_players=number_of_players+role
+		for role in self.players.keys():
+			number_of_players=number_of_players-len(self.players[role])
 		for i in range(1,number_of_players+1):
 			best=self.add_best_player(players_copy)
 			players_copy.remove(best)
+		for role in self.players.keys():
+			self.players[role]=sorted(self.players[role],key=lambda x:x["WeightedFantasyEvaluation"],reverse=True)
+
+	def clear_not_fixed(self):
+		for role in self.max.keys():
+			tmp=[]
+			for player in self.players[role]:
+				if player["Owner"]=="ME":
+					tmp.append(player)
+			self.players[role]=tmp
 
 	def module(self):
 		return str(self.normal["D"])+" "+str(self.normal["C"])+" "+str(self.normal["A"])
@@ -101,7 +120,7 @@ class Selection:
 	def show_players(self):
 		for zone in self.players:
 			for attacker in self.players[zone]:
-				print(attacker["Name"]+"   "+attacker["WeightedFantasyEvaluation"]+"   "+ attacker["Role"])
+				print(attacker["Name"]+"   "+attacker["WeightedFantasyEvaluation"]+"   "+ attacker["Role"]+ "  "+attacker["Owner"])
 
 class Competitor:
 	def __init__(self,name,selection,budget):
@@ -183,7 +202,9 @@ def init():
 	selection9=Selection(3,6,1)
 	modules.append(selection9)
 
+	return modules
 
+def fill(modules,players):
 	for pnt in modules:
 		pnt.fill(players)
 
@@ -221,6 +242,9 @@ competitors["GATTI"]=Competitor("GATTI",copy.deepcopy(fake_sel),500)
 competitors["VE"]=Competitor("VE",copy.deepcopy(fake_sel),500)
 
 
+modules=init()
+modules=fill(modules,players)
+
 all=[]
 for player in players:
 	if float(player["Plays2018_2019"])==1 and (player["Owner"]==None or player["Owner"]==""):
@@ -228,6 +252,11 @@ for player in players:
 	
 	if player["Owner"]!=None and player["Owner"]!="ME" and player["Owner"]!="":
 		competitors[player["Owner"]].buy(player,float(player["Price"]))
+
+	if player["Owner"]=="ME":
+		for module in modules:
+			module.add_player_object(player)
+
 
 players=copy.copy(all)
 
@@ -275,8 +304,18 @@ while command!= "q":
 		owner=owner.upper()
 		competitors[owner].show()
 	if command=="compute" or command=="c":
-		init()
+		modules=fill(modules,players)
 	if command=="store" or command=="s":
 		store(all,counter)
 		counter=counter+1
+	if command=="me" or command=="m":
+		print("Who I bought:")
+		owner=sys.stdin.readline()
+		owner=owner.strip()
+		owner=owner.upper()
+		player_obj=get_by_surname(players,owner)
+		print(player_obj["Name"])
+		player_obj["Owner"]="ME"
+		for module in modules:
+			module.add_player_object(player_obj)
 	
