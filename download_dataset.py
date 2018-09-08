@@ -13,6 +13,7 @@ PLAYER_SYNTHESIS="dataset/players_synthesis_by_me.csv"
 TEAM_NAME="dataset/player_teams.csv"
 SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
 SYNTHESIS_QUOTATION_FILE="dataset/synthesis_with_quotations.csv"
+MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 
 
 SHEET_NAME="Fantagazzetta"

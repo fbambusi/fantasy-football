@@ -8,21 +8,24 @@ import copy
 import sys
 class Selection:
 
-	def __init__(self,defenders,midfielders,attackers):
-		self.normal={}
-		self.normal["D"]=defenders
-		self.normal["C"]=midfielders
-		self.normal["A"]=attackers
-		self.normal["P"]=1
-		self.max={}
-		self.max["D"]=8
-		self.max["C"]=8
-		self.max["A"]=8
-		self.max["P"]=3
+	def __init__(self,defenders,midfielders,attackers,simple=True,roles={}):
+		self.normal=roles
+		for role in roles.keys():
+			self.max[role]=8
+			self.players[role]=[]
+		if simple:
+			self.normal["D"]=defenders
+			self.normal["C"]=midfielders
+			self.normal["A"]=attackers
+			self.normal["P"]=1
+			self.max={}
+			self.max["D"]=8
+			self.max["C"]=8
+			self.max["A"]=8
+			self.max["P"]=3
 		#self.max["COACH"]=0
 		
-		self.players={"A":[],"C":[],"D":[],"P":[]}
-
+		
 	def add_player(self,players):
 		cont=0
 		while len(self.players[players[cont]["Role"]])>=self.max[players[cont]["Role"]]:
