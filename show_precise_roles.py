@@ -92,11 +92,11 @@ class GraphBlueprint:
         for player in players:
             graph.add_edge("source",player["Name"],weight=0,capacity=1)
         for player in players:
-            for slot in slots:
+            for slot in selection.slots:
                 if slot.compatible(player):
                     graph.add_edge(player["Name"],slot.name(),weight=-1*float(player["WeightedFantasyEvaluation"]),capacity=1)
 
-        for slot in slots:
+        for slot in selection.slots:
             graph.add_edge(slot.name(),"sink",weight=0,capacity=slot.required_players)
 
         graph.add_edge("sink","source",weight=0,capacity=len(players)+100)
@@ -118,26 +118,34 @@ def  get_players():
 
     return all
 
-players=get_players()
-my_players=filter(lambda p:p["Owner"]=="ME",players)
-my_players=sorted(my_players,key=lambda p:p["MeanFantasyEvaluation"],reverse=True)
+def my_players():
+    players=get_players()
+    my_players=filter(lambda p:p["Owner"]=="ME",players)
+    return sorted(my_players,key=lambda p:p["MeanFantasyEvaluation"],reverse=True)
 
-slots=[]
-slots.append(Slot(["A","W"],2))
-slots.append(Slot(["A","Pc"],1))
-slots.append(Slot(["E"],2))
-slots.append(Slot(["M","C"],2))
-slots.append(Slot(["Dc"],3))
-slots.append(Slot(["Por"],1))
+def main():
+    my_players=my_players()
 
-my343=MantraSelection(slots)
-my343.fill(my_players)
+    slots=[]
+    slots.append(Slot(["A","W"],2))
+    slots.append(Slot(["A","Pc"],1))
+    slots.append(Slot(["E"],2))
+    slots.append(Slot(["M","C"],2))
+    slots.append(Slot(["Dc"],3))
+    slots.append(Slot(["Por"],1))
 
-flow=GraphBlueprint(my343,my_players)
-for player in flow.roles:
-    for role in flow.roles[player]:
-        if flow.roles[player][role]>0 and role!="sink" and role!="source" and player!="source" and player!="sink":
-            print(player+"   should play as    "+role)
+    my343=MantraSelection(slots)
+    my343.fill(my_players)
+
+    flow=GraphBlueprint(my343,my_players)
+    for player in flow.roles:
+        for role in flow.roles[player]:
+            if flow.roles[player][role]>0 and role!="sink" and role!="source" and player!="source" and player!="sink":
+                print(player+"   gioca come    "+role)
 
 
+if __name__ == "__main__":
+    main()
 
+
+#https://www.fantagazzetta.com/Servizi/Ultimi11.ashx?id=3015&tv=273627688600&ts=273844040992&g=3&ids=13
