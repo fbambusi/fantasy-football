@@ -124,7 +124,7 @@ def my_players():
     return sorted(my_players,key=lambda p:p["MeanFantasyEvaluation"],reverse=True)
 
 def main():
-    my_players=my_players()
+    my_p=my_players()
 
     slots=[]
     slots.append(Slot(["A","W"],2))
@@ -135,14 +135,29 @@ def main():
     slots.append(Slot(["Por"],1))
 
     my343=MantraSelection(slots)
-    my343.fill(my_players)
+    my343.fill(my_p)
 
-    flow=GraphBlueprint(my343,my_players)
+    flow=GraphBlueprint(my343,my_p)
+    holders=[]
     for player in flow.roles:
         for role in flow.roles[player]:
             if flow.roles[player][role]>0 and role!="sink" and role!="source" and player!="source" and player!="sink":
                 print(player+"   gioca come    "+role)
+                holders.append(player)
+    
+    print("=======================================================================")
 
+    next=[]
+    for player in my_p:
+        if player["Name"] not in holders:
+            next.append(player)
+    flow=GraphBlueprint(my343,next)
+    holders=[]
+    for player in flow.roles:
+        for role in flow.roles[player]:
+            if flow.roles[player][role]>0 and role!="sink" and role!="source" and player!="source" and player!="sink":
+                print(player+"   gioca come    "+role)
+                holders.append(player)
 
 if __name__ == "__main__":
     main()

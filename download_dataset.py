@@ -7,6 +7,7 @@ import csv
 EXCEL_NAME="dataset/day"
 CSV_NAME="dataset/day"
 FULL_DATASET_NAME="dataset/all_days.csv"
+DAYS="dataset/all_days_with_fantasy_evaluation.csv"
 TMP_DATASET_NAME="dataset/all_days_tmp.csv"
 BASIC_FANGAZZETTA_EVALUATIONS="dataset/quotazioni.csv"
 PLAYER_SYNTHESIS="dataset/players_synthesis_by_me.csv"
@@ -19,6 +20,9 @@ MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
 SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"]
+DAILY_KEYS=SINGLE_EVALUATION_KEYS
+DAILY_KEYS.append("FantasyEvaluation")
+DAILY_KEYS.append("Delta")
 
 
 SYNTHESIS_KEYS=["Name","VarianceFantasyEvaluation","PlayedMatches","MeanFantasyEvaluation"]
