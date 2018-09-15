@@ -28,6 +28,9 @@ def first_team(players):
 	for player in players:
 		probability=probability_of_being_in_first_team(player["Name"],parsed_html)
 		player["Prob"]=probability
+		player["Value"]=probability*float(player["MeanFantasyEvaluation"])
+		#player["Value"]=player["WeightedFantasyEvaluation"]
+		player["Value"]=player["MeanFantasyEvaluation"]
 		if probability>5:
 			all.append(player)
 
@@ -45,6 +48,19 @@ def my_formation(players):
 	slots.append(Slot(["M","C"],2))
 	slots.append(Slot(["Dc"],3))
 	slots.append(Slot(["Por"],1))
+
+
+
+	slots=[]
+	slots.append(Slot(["A","W"],2))
+	slots.append(Slot(["A","Pc"],1))
+	slots.append(Slot(["M"],1))
+	slots.append(Slot(["M","C"],2))
+	slots.append(Slot(["Dc"],2))
+	slots.append(Slot(["Ds"],1))
+	slots.append(Slot(["Dd"],1))
+	slots.append(Slot(["Por"],1))
+
 
 	my343=MantraSelection(slots)
 	my343.fill(my_players)
@@ -66,17 +82,25 @@ def main():
 	holders=[]
 	bench=[]
 
+	my_team=open("opponents/me1.txt","w")
+	value=0
 	for player in roles.keys():
 		player_dict[player]["Where"]=roles[player]
 		holders.append(player_dict[player])
+		value=value+float(player_dict[player]["Value"])
+	print("Value of team: "+str(value))
 	for player in players:
 		if player["Name"] not in roles:
 			bench.append(player)
 	print("YEEE")
+	names=[]
 	for player in holders:
-		print(player["Name"]+"    "+str(player["WeightedFantasyEvaluation"])+"     "+player["Where"])
-	print("NOOOO")
+		print(player["Name"]+"    "+str(player["Value"])+"     "+player["Where"])
+		my_team.write(player["Name"]+"\n")
+	print("NOOOO=======================================================")
+	bench=sorted(bench,key=lambda p:p["Value"],reverse=True)
 	for player in bench:
-		print(player["Name"]+"    "+str(player["WeightedFantasyEvaluation"]))
+		for role in player["MantraRole"]:
+			print(player["Name"]+"    "+str(player["Value"])+"    "+player["Role"]+"    "+role+"    "+str(player["Prob"]))
 if __name__ == "__main__":
     main()

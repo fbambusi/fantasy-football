@@ -44,6 +44,7 @@ SYNTHESIS_KEYS_RECENT.append("Plays2018_2019")
 BID_HEADERS=SYNTHESIS_KEYS_RECENT
 BID_HEADERS.append("Owner")
 BID_HEADERS.append("Price")
+BID_HEADERS.append("MantraRole")
 
 def csv_from_excel(number_of_day):
     wb = xlrd.open_workbook(EXCEL_NAME+'.xlsx')

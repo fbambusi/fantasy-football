@@ -94,7 +94,7 @@ class GraphBlueprint:
         for player in players:
             for slot in selection.slots:
                 if slot.compatible(player):
-                    graph.add_edge(player["Name"],slot.name(),weight=-1*float(player["WeightedFantasyEvaluation"]),capacity=1)
+                    graph.add_edge(player["Name"],slot.name(),weight=-1*float(player["Value"]),capacity=1)
 
         for slot in selection.slots:
             graph.add_edge(slot.name(),"sink",weight=0,capacity=slot.required_players)
@@ -118,6 +118,21 @@ def  get_players():
 
     return all
 
+def get_players_dict():
+    attackers_file=open(PLAYER_SYNTHESIS)
+    player_dict={}
+    player_list=csv.DictReader(attackers_file)
+    all=[]
+    for player in player_list:
+        if player["Name"] not in player_dict:
+            player["MantraRole"]=[player["MantraRole"]]
+            player_dict[player["Name"]]=player
+            all.append(player)
+        else:
+            player_dict[player["Name"]]["MantraRole"].append(player["MantraRole"])
+
+    return player_dict
+
 def my_players():
     players=get_players()
     my_players=filter(lambda p:p["Owner"]=="ME",players)
@@ -134,6 +149,8 @@ def main():
     slots.append(Slot(["Dc"],3))
     slots.append(Slot(["Por"],1))
 
+    for player in my_p:
+        player["Value"]=player["WeightedFantasyEvaluation"]
     my343=MantraSelection(slots)
     my343.fill(my_p)
 
@@ -152,13 +169,20 @@ def main():
         if player["Name"] not in holders:
             next.append(player)
     flow=GraphBlueprint(my343,next)
-    holders=[]
     for player in flow.roles:
         for role in flow.roles[player]:
             if flow.roles[player][role]>0 and role!="sink" and role!="source" and player!="source" and player!="sink":
                 print(player+"   gioca come    "+role)
                 holders.append(player)
-
+    next=[]
+    for player in my_p:
+        if player["Name"] not in holders:
+            next.append(player)
+    next=sorted(next,key=lambda p:p["WeightedFantasyEvaluation"],reverse=True)
+    for p in next:
+        print(p["Name"]+"     :")
+        for r in p["MantraRole"]:
+            print("            "+r)
 if __name__ == "__main__":
     main()
 
