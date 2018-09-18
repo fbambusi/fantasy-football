@@ -6,7 +6,7 @@ import csv
 
 EXCEL_NAME="dataset/day"
 CSV_NAME="dataset/day"
-FULL_DATASET_NAME="dataset/all_days.csv"
+FULL_DATASET_NAME="dataset/all_days2.csv"
 DAYS="dataset/all_days_with_fantasy_evaluation.csv"
 TMP_DATASET_NAME="dataset/all_days_tmp.csv"
 BASIC_FANGAZZETTA_EVALUATIONS="dataset/quotazioni.csv"
@@ -18,8 +18,8 @@ MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 
 
 SHEET_NAME="Fantagazzetta"
-HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"'
-SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day"]
+HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"'
+SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"]
 DAILY_KEYS=SINGLE_EVALUATION_KEYS
 DAILY_KEYS.append("FantasyEvaluation")
 DAILY_KEYS.append("Delta")
@@ -80,12 +80,30 @@ def merge_csv():
             else:
                 print(line,file=your_csv_file,end="")
 
-#for day in range(1,39):
-#    urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=-4&s=2017-18", EXCEL_NAME+".xlsx")
-#    csv_from_excel(day)
-#    os.remove(EXCEL_NAME+'.xlsx')
-#    clean_csv(day)
+def append_new_days(min_day_included,max_day_included,year):
+    fields=['first','second','third']
+    with open(FULL_DATASET_NAME, 'w', newline='') as f:
+        writer = csv.writer(f)
+        for day in range(min_day_included,max_day_included+1):
+        
+            with open(CSV_NAME+str(day)+'final.csv') as searchfile:
+                reader=csv.reader(searchfile)
+                all=[]
+                for row in reader:
+                    row.append("2018-19")
+                    all.append(row)
+                    writer.writerow(row)
+
+#for day in range(1,4):
+ #   urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=274947535635&s=2018-19", EXCEL_NAME+".xlsx")
+  #  csv_from_excel(day)
+   # os.remove(EXCEL_NAME+'.xlsx')
+    #clean_csv(day)
 
 
 #C:/Users/asus/Desktop/Poli/fantasy-football/dataset/played_matches.csv
 #merge_csv()
+
+append_new_days(1,3,"2018-19")
+
+

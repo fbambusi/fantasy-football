@@ -73,6 +73,13 @@ def my_formation(players):
 	            all[player]=role
 	return all 
 
+def my_formation_obj(player_list,player_dict):
+	my_f=my_formation(player_list)
+	all=[]
+	for player in my_f:
+		all.append(player_dict[player])
+	return all
+
 def main():
 	players=my_players()
 	player_dict={}

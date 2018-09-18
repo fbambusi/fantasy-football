@@ -103,6 +103,19 @@ class GraphBlueprint:
         flowCost, flowDict = nx.network_simplex(graph)
         self.roles=flowDict
 
+#this method returns mean and variance of a list of players
+def  distribution(player_list,attribute="MeanFantasyEvaluation"):
+    value=0
+    variance=0
+    for player in player_list:
+        value=value+float(player[attribute])
+        try:
+            variance_tmp=float(player["VarianceFantasyEvaluation"])
+        except ValueError:
+            variance_tmp=0
+        variance=variance+variance_tmp
+    return value,variance
+
 def  get_players():
     attackers_file=open(PLAYER_SYNTHESIS)
     player_dict={}
