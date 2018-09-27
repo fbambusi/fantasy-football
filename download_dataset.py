@@ -19,9 +19,8 @@ MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"'
-SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"]
+SINGLE_EVALUATION_KEYS=["Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","Year","FantasyEvaluation"]
 DAILY_KEYS=SINGLE_EVALUATION_KEYS
-DAILY_KEYS.append("FantasyEvaluation")
 DAILY_KEYS.append("Delta")
 
 
@@ -46,6 +45,17 @@ BID_HEADERS.append("Owner")
 BID_HEADERS.append("Price")
 BID_HEADERS.append("MantraRole")
 
+
+
+BONUS_GOAL=3
+MALUS_GOAL=-1
+BONUS_ASSIST=1
+SCORED_PENALTY_BONUS=3
+SAVED_PENALTY_BONUS=3
+MISSED_PENALTY_MALUS=-3
+
+
+
 def csv_from_excel(number_of_day):
     wb = xlrd.open_workbook(EXCEL_NAME+'.xlsx')
     sh = wb.sheet_by_name(SHEET_NAME)
@@ -69,7 +79,7 @@ def clean_csv(day):
     os.remove(CSV_NAME+str(day)+'.csv')
 
 def merge_csv():
-    your_csv_file = open(FULL_DATASET_NAME, 'w')
+    your_csv_file = open(TMP_DATASET_NAME, 'w')
     print(HEADERS,file=your_csv_file)
     for day in range(1,39):
         searchfile=open(CSV_NAME+str(day)+'final.csv')
@@ -80,30 +90,131 @@ def merge_csv():
             else:
                 print(line,file=your_csv_file,end="")
 
+
+#this fucntion creates a file containing all days in range
 def append_new_days(min_day_included,max_day_included,year):
-    fields=['first','second','third']
     with open(FULL_DATASET_NAME, 'w', newline='') as f:
         writer = csv.writer(f)
+        writer.writerow(SINGLE_EVALUATION_KEYS)
         for day in range(min_day_included,max_day_included+1):
-        
+           
             with open(CSV_NAME+str(day)+'final.csv') as searchfile:
                 reader=csv.reader(searchfile)
-                all=[]
+                first=True
                 for row in reader:
-                    row.append("2018-19")
-                    all.append(row)
-                    writer.writerow(row)
+                    if first:
+                        first=False
+                    else:
+                        row.append("2018-19")
+                        writer.writerow(row)
 
-#for day in range(1,4):
- #   urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=274947535635&s=2018-19", EXCEL_NAME+".xlsx")
-  #  csv_from_excel(day)
-   # os.remove(EXCEL_NAME+'.xlsx')
-    #clean_csv(day)
+
+
+def assign_fantasy_evaluation():
+    with open(FULL_DATASET_NAME,'r') as csvinput:
+        print("Opening file      "+FULL_DATASET_NAME)
+        with open(TMP_DATASET_NAME, 'w') as csvoutput:
+            keys=SINGLE_EVALUATION_KEYS
+            writer = csv.DictWriter(csvoutput, quoting=csv.QUOTE_ALL, lineterminator='\n',fieldnames=keys)
+
+            reader = csv.DictReader(csvinput)
+
+            all= []
+            row={}
+            for key in keys:
+                row[key]=key
+            all.append(row)
+
+            for row in reader:
+                row["Voto"]=row["Voto"].strip("*")
+                fantasy_evaluation=float(row["Voto"])+BONUS_GOAL*float(row['Gf'])+MALUS_GOAL*float(row['Gs'])+BONUS_ASSIST*float(row['Ass'])
+                fantasy_evaluation+=SAVED_PENALTY_BONUS*float(row["Rp"])
+                fantasy_evaluation+=MISSED_PENALTY_MALUS*float(row["Rs"])
+                fantasy_evaluation+=SCORED_PENALTY_BONUS*float(row["Rf"])
+                row["FantasyEvaluation"]=fantasy_evaluation
+                all.append(row)
+
+            writer.writerows(all)
+
+    os.remove(FULL_DATASET_NAME)
+    os.rename(TMP_DATASET_NAME,FULL_DATASET_NAME)
+
+def add_new_days_to_old():
+    with open(FULL_DATASET_NAME,'r') as new_days_file:
+        with open(DAYS, 'r') as old_days_file:
+            
+            reader_new = csv.DictReader(new_days_file)
+            reader_old=csv.DictReader(old_days_file)
+            all=[]
+            row={}
+            keys=SINGLE_EVALUATION_KEYS
+            for key in keys:
+                row[key]=key
+            all.append(row)
+
+            max=0
+            for row in reader_old:
+                all.append(row)
+                if float(row["Day"])>max and row["Year"]=="2018-19":
+                    max=float(row["Day"])
+            first=True
+            for row in reader_new:
+                if first:
+                    first=False
+                elif float(row["Day"])>max:
+                    all.append(row)
+            with open(TMP_DATASET_NAME, 'w') as csvoutput:
+                writer = csv.DictWriter(csvoutput, quoting=csv.QUOTE_ALL, lineterminator='\n',fieldnames=keys)
+                writer.writerows(all)
+
+
+
+def download():
+
+    for day in range(1,39):
+
+#https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g=6&t=-4&s=2016-17
+
+   # https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g=2&t=275507133750&s=2018-19
+        urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=-4&s=2016-17", EXCEL_NAME+".xlsx")
+        csv_from_excel(day)
+        os.remove(EXCEL_NAME+'.xlsx')
+        clean_csv(day)
 
 
 #C:/Users/asus/Desktop/Poli/fantasy-football/dataset/played_matches.csv
-#merge_csv()
-
-append_new_days(1,3,"2018-19")
 
 
+def concat_files():
+    with open(FULL_DATASET_NAME,'r') as new_days_file:
+        with open(DAYS, 'r') as old_days_file:
+            
+            reader_new = csv.DictReader(new_days_file)
+            reader_old=csv.DictReader(old_days_file)
+
+            all=[]
+            row={}
+            keys=SINGLE_EVALUATION_KEYS
+            for key in keys:
+                row[key]=key
+            all.append(row)
+
+            for row in reader_old:
+                all.append(row)
+            for row in reader_new:
+                all.append(row)
+
+            with open(TMP_DATASET_NAME, 'w') as csvoutput:
+                writer = csv.DictWriter(csvoutput, quoting=csv.QUOTE_ALL, lineterminator='\n',fieldnames=keys)
+                writer.writerows(all)
+
+def main():
+    #merge_csv()
+   # append_new_days(1,5,"2018-19")
+    #assign_fantasy_evaluation()
+    #add_new_days_to_old()
+    concat_files()
+    pass
+if __name__ == "__main__":
+    main()
+   

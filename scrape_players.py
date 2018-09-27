@@ -102,12 +102,18 @@ def main():
 	print("YEEE")
 	names=[]
 	for player in holders:
-		print(player["Name"]+"    "+str(player["Value"])+"     "+player["Where"])
+		print(player["Name"]+"    "+str(player["Value"])+"     "+player["Where"]+"    "+player["Role"])
 		my_team.write(player["Name"]+"\n")
 	print("NOOOO=======================================================")
+	roles=["P","D","C","A"]
+
 	bench=sorted(bench,key=lambda p:p["Value"],reverse=True)
-	for player in bench:
-		for role in player["MantraRole"]:
-			print(player["Name"]+"    "+str(player["Value"])+"    "+player["Role"]+"    "+role+"    "+str(player["Prob"]))
+	
+	for role in roles:
+		print(role+"                <-------")
+		for player in bench:
+			#for role in player["MantraRole"]:
+				if(player["Role"]==role):
+					print(player["Name"]+"    "+str(player["Value"])+"    "+player["Role"]+"    "+role+"    "+str(player["Prob"]))
 if __name__ == "__main__":
     main()
