@@ -170,13 +170,13 @@ def add_new_days_to_old():
 
 
 def download():
-
-    for day in range(1,39):
+#https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g=6&t=275842789890&s=2018-19
+    for day in range(6,7):
 
 #https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g=6&t=-4&s=2016-17
 
    # https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g=2&t=275507133750&s=2018-19
-        urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=-4&s=2016-17", EXCEL_NAME+".xlsx")
+        urllib.request.urlretrieve ("https://www.fantagazzetta.com/Servizi/Excel.ashx?type=1&g="+str(day)+"&t=275842789890&s=2018-19", EXCEL_NAME+".xlsx")
         csv_from_excel(day)
         os.remove(EXCEL_NAME+'.xlsx')
         clean_csv(day)
@@ -209,11 +209,12 @@ def concat_files():
                 writer.writerows(all)
 
 def main():
+    download()
     #merge_csv()
-   # append_new_days(1,5,"2018-19")
-    #assign_fantasy_evaluation()
-    #add_new_days_to_old()
-    concat_files()
+    append_new_days(6,6,"2018-19")
+    assign_fantasy_evaluation()
+    add_new_days_to_old()
+    #concat_files()
     pass
 if __name__ == "__main__":
     main()
