@@ -3,7 +3,24 @@ import urllib.request
 from show_precise_roles import *
 
 def download_html():
-	return urllib.request.urlopen ("https://www.fantagazzetta.com/probabili-formazioni-serie-a").read()
+	try:
+		html=urllib.request.urlopen ("https://www.fantagazzetta.com/probabili-formazioni-serie-a").read()
+		print("Server Online")
+		with open(LIKELY_FORMATIONS,"w") as formations_file:
+		
+			formations_file.write(str(html))
+	except urllib.error.HTTPError as e:
+		print("Server Offline")
+		#do stuff here
+	except urllib.error.URLError as e:
+		print("Server Offline")
+	 #do stuff here
+	
+
+
+def retrieve_players_html():
+	with open(LIKELY_FORMATIONS,"r") as formations_file:
+		return formations_file.read()
 
 
 def probability_of_being_in_first_team(player_name,parsed_html):
@@ -22,7 +39,7 @@ def probability_of_being_in_first_team(player_name,parsed_html):
 	return 0
 
 def first_team(players):
-	html=str(download_html())
+	html=str(retrieve_players_html())
 	parsed_html = BeautifulSoup(html, 'html.parser')
 	all=[]
 	for player in players:
@@ -31,7 +48,7 @@ def first_team(players):
 		player["Value"]=probability*float(player["MeanFantasyEvaluation"])
 		#player["Value"]=player["WeightedFantasyEvaluation"]
 		player["Value"]=player["MeanFantasyEvaluation"]
-		if probability>5:
+		if probability>30:
 			all.append(player)
 
 	return sorted(all,key=lambda p:p["Prob"],reverse=True)
@@ -81,6 +98,7 @@ def my_formation_obj(player_list,player_dict):
 	return all
 
 def main():
+	download_html()
 	players=my_players()
 	player_dict={}
 	for player in players:

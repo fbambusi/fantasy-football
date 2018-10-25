@@ -16,6 +16,7 @@ SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
 SYNTHESIS_QUOTATION_FILE="dataset/synthesis_with_quotations.csv"
 MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 
+LIKELY_FORMATIONS="dataset/likely_formations.html"
 
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"'

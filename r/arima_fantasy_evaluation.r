@@ -4,9 +4,9 @@ player_model<-function(name)
   
   verdi <- verdi[with(verdi,order(verdi$Year,verdi$Day)) , ]
   ts<-verdi[c("Day","FantasyEvaluation","Voto")]
-  ts$z <- c(NA,diff(ts$Voto))
-  mod<-auto.arima(scale(ts$z,scale=FALSE))
-  mod<-auto.arima(scale(verdi$Voto,scale=FALSE))
+  ts$z <- c(NA,diff(ts$FantasyEvaluation))
+  #mod<-auto.arima(scale(ts$z,scale=FALSE))
+  mod<-auto.arima(scale(verdi$FantasyEvaluation,scale=FALSE))
   return(mod);
   
 }
@@ -20,17 +20,17 @@ fore<-function(mod)
 {
   val<-forecast(mod,1)$mean[1]
   delta<-mean(ts$z[-1])+val
-  fore<-tail(verdi$Voto, n=1)+delta
+  fore<-tail(verdi$FantasyEvaluation, n=1)+delta
   return(fore)
 }
 
 
 trivial_predictor<-function(name){
-  return (mean( subset(all_days_with_fantasy_evaluation,Nome==name)$Voto )  );
+  return (mean( subset(all_days_with_fantasy_evaluation,Nome==name)$FantasyEvaluation )  );
 }
 
 trivial_error<-function(name){
-  return (var( subset(all_days_with_fantasy_evaluation,Nome==name)$Voto )  );
+  return (var( subset(all_days_with_fantasy_evaluation,Nome==name)$FantasyEvaluation )  );
 }
 
 mine<-as.data.frame(unique(subset(players_synthesis_by_me,Owner=="ME")$Name))
@@ -48,8 +48,3 @@ mine$triv=as.data.frame(triv)
 mine$err_arima=t(as.data.frame(arima_err))
 mine$triv_err=as.data.frame(triv_err)
 View(mine)
-rm(arima_err)
-rm(res)
-rm(fit)
-rm(mod)
-rm(ts)
