@@ -36,6 +36,7 @@ class bidder:
 	def correctValueOfPlayer(self,playerName,correction):
 		self.values[playerName]+=correction
 
+	
 	def correctValueOfPlayers(self,winner,learning_rate):
 		for playerName in self.values.keys():
 			self.values[playerName]+=(winner.getValueOfPlayers()[playerName]-self.values[playerName])*learning_rate
@@ -43,7 +44,7 @@ class bidder:
 	def randomlyCorrectValueOfPlayers(self,learning_rate,budget):
 		oldPrice=0
 		for playerName in self.values.keys():
-			self.values[playerName]+=(random.random()-0.5)*learning_rate*3+(oldPrice-self.values[playerName])*learning_rate/4
+			self.values[playerName]+=(random.random()-0.5)*learning_rate*8+(oldPrice-self.values[playerName])*learning_rate/8
 
 			if self.values[playerName]>budget:
 				self.values[playerName]=budget
@@ -57,7 +58,7 @@ class bidder:
 		evals={}
 		currEval=random.random()
 		for player in playersList:
-			currEval=random.random()
+			currEval+=random.random()/10
 			evals[player.getName()]=currEval
 		self.values=evals
 
