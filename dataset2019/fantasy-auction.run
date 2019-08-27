@@ -1,0 +1,6 @@
+reset;
+model fantasy-auction.mod;
+data fantasy-auction-mantra.dat;
+option solver "/home/asino/Downloads/ampl_linux-intel64/cplex";
+solve;
+display buy;

@@ -1,0 +1,23 @@
+set Players:= PC1 PC2 PC3;
+set Roles:= Pc Dd Dc;
+set Modules:= m442 m4141;
+set CompatibilityPlayerRole:=
+(PC1,*) Pc
+(PC2,*) Pc
+(PC3,*) Dc
+;
+
+set CompatibilitySlotRole:=
+(m442,1,*) Pc Dd
+(m442,2,*) Pc Dd
+
+(m4141,1,*) Pc Dd
+(m4141,2,*) Pc Dd
+;
+
+param performance:=
+PC1 10
+PC2 20
+PC3 30
+;
+
