@@ -2,12 +2,14 @@ import random
 
 from bidder import bidder
 from player import traditionalPlayer
+import matplotlib.pyplot as plt
 
-NBIDDERS=7
+
+NBIDDERS=9
 BUDGET=500
-NPLAYERS=100
+NPLAYERS=120
 
-LEARNING_RATE=0.7
+LEARNING_RATE=0.4
 
 NEEDED_PLAYERS=11
 players=[]
@@ -15,17 +17,7 @@ players=[]
 NROUNDS=6000*20
 random.seed(19)
 
-for i in range(NPLAYERS):
-	players.append(traditionalPlayer(i,random.random()**5,"A"))
-players=sorted(players,key=lambda p:-p.getPerformance())
-bidders=[]
-
-for i in range(NBIDDERS):
-	bid=bidder(BUDGET)
-	bid.setBudget(BUDGET)
-	bid.randomizeEvaluation(players)
-	bidders.append(bid)
-
+PATIENCE=20
 def everyBidderHasFullTeam(bidders):
 	for bidder in bidders:
 		if bidder.getNumberOfOwnedPlayers()<NEEDED_PLAYERS:
@@ -34,9 +26,6 @@ def everyBidderHasFullTeam(bidders):
 
 
 def costFunction(bidders,players):
-	players=pls
-	pls=list(players)
-
 	while not everyBidderHasFullTeam(bidders):
 		for currentBidder in bidders:
 			if currentBidder.getNumberOfOwnedPlayers()<NEEDED_PLAYERS:
@@ -48,7 +37,7 @@ def costFunction(bidders,players):
 					players.remove(desiredPlayer)
 		
 	bidders=sorted(bidders, key=lambda p:p.getPerformanceOfTeam())
-	delta=bidders[0].getPerformanceOfTeam()-bidders[-1].getPerformanceOfTeam()
+	delta=-bidders[0].getPerformanceOfTeam()+bidders[-1].getPerformanceOfTeam()
 
 	return delta,bidders[-1]
 
@@ -62,12 +51,25 @@ def gradientDescent(bidders,players,playerToUpdate):
 	initialValue,winner=costFunction(bidders,players)
 	initialGradient=LEARNING_RATE
 	costHistory=[]
-	for i in range(100):
+	evaluationHistory={}
+	for bidder in bidders:
+		evaluationHistory[bidder]=[]
+	nStepsWithoutChange=0
+	for i in range(800):
 		stepOfGradientDescent(bidders,players,playerToUpdate,winner,initialGradient)
-		newValue=costFunction(bidders,players)
-		initialGradient=(newValue-initialValue)/(initialGradient)
+		newValue,winner=costFunction(bidders,players)
 		initialValue=newValue
 		costHistory.append(newValue)
+		for bidd in bidders:
+			evaluationHistory[bidd].append(bidd.getValueOfPlayers()[playerToUpdate.getName()])
+		if initialGradient==0:
+			nStepsWithoutChange+=1
+			initialGradient=LEARNING_RATE*(-2)**nStepsWithoutChange
+		else:
+			nStepsWithoutChange=0
+			initialGradient=(newValue-initialValue)/(initialGradient)
+		
+	return costHistory,evaluationHistory
 
 def getBuyerAndPrice(bidders,desiredPlayer):
 	dest=False
@@ -100,90 +102,43 @@ def getBuyerAndPrice(bidders,desiredPlayer):
 							price=price2
 	return dest,price
 	
+def main():
+	players=[]
+	for i in range(NPLAYERS):
+		players.append(traditionalPlayer(i,random.random()**5,"A"))
+	players=sorted(players,key=lambda p:-p.getPerformance())
+	bidders=[]
 
-pls=list(players)
+	for i in range(NBIDDERS):
+		bid=bidder(BUDGET)
+		bid.setBudget(BUDGET)
+		bid.randomizeEvaluation(players)
+		bidders.append(bid)
 
-deltas=[]
-perfs={}
-budgets={}
-for bid in bidders:
-	perfs[bid]=[]
-	budgets[bid]=[]
-
-for player in players:
-	print(player.getPerformance())
-print("\n\n")
-print(bidders[0].getDesiredPlayers(players)[0].getPerformance())
-
-
-for j in range(NROUNDS):
-	if j%1000==0:
-		print(j)
-	players=pls
 	pls=list(players)
 
-	while not everyBidderHasFullTeam(bidders):
-		for currentBidder in bidders:
-			if currentBidder.getNumberOfOwnedPlayers()<NEEDED_PLAYERS:
-				desiredPlayer=currentBidder.getDesiredPlayers(players)[0]
-				buyer,price=getBuyerAndPrice(bidders,desiredPlayer)
-				if buyer:
-					buyer.buyPlayer(desiredPlayer,price)
-							
-					players.remove(desiredPlayer)
-		
-	bidders=sorted(bidders, key=lambda p:p.getPerformanceOfTeam())
-	deltas.append(bidders[0].getPerformanceOfTeam()-bidders[-1].getPerformanceOfTeam())
-
-	for bidder in bidders[:-1]:
-	
-		bidder.correctValueOfPlayers(bidders[-1],LEARNING_RATE)
-
-	bidders[-1].randomlyCorrectValueOfPlayers(LEARNING_RATE,BUDGET)
-
+	deltas=[]
+	perfs={}
+	budgets={}
 	for bid in bidders:
-		perfs[bid].append(bid.getPerformanceOfTeam())
-		bid.resetOwnedPlayers()
-		budgets[bid].append(bid.getBudget())
-		bid.setBudget(BUDGET)
+		perfs[bid]=[]
+		budgets[bid]=[]
 
-import matplotlib.pyplot as plt
+	for player in players:
+		print(player.getPerformance())
+	print("\n\n")
+	print(bidders[0].getDesiredPlayers(players)[10].getPerformance())
 
-'''
-for pf in perfs.keys():
-	pass
-	#plt.plot(perfs[pf])
-plt.plot(deltas)
-plt.show()
+	costHist,evalHist=gradientDescent(bidders,players,players[1])
 
-for bid in bidders:
-	plt.plot(perfs[bid])
-	break
+	plt.plot(costHist)
+	#plt.show()
+	for row in evalHist.values():
+		pass
 
-	
-plt.show()
-'''
-for bid in bidders:
-	vls=bid.getValueOfPlayers()
+		#plt.plot(row)
+	plt.show()
 
-	px=[]
-	py=[]
-	for player in pls:
-		px.append(player.getPerformance())
-		py.append(vls[player.getName()])
-	plt.plot(budgets[bid])
-#	plt.scatter(px,py)
 
-plt.show()
-px=[]
-py=[]
-
-for player in pls:
-	px.append(player.getPerformance())
-	prs=[]
-	for bidder in bidders:
-		prs.append(bidder.getValueOfPlayers()[player.getName()])
-	prs=sorted(prs)
-	py.append(prs[-2])
-plt.scatter(px,py)
-plt.show()
+if __name__ == "__main__":
+    main()

@@ -6,6 +6,9 @@ import time
 from amplpy import AMPL,Environment
 import numpy as np
 
+
+#start 10:10 end 10:18
+
 ampl = AMPL(Environment('/home/asino/Downloads/ampl_linux-intel64/'))
 ampl.setOption("solver","/home/asino/Downloads/ampl_linux-intel64/cplex")
 random.seed(7)

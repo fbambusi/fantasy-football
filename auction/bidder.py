@@ -4,6 +4,7 @@ class bidder:
 	def __init__(self,budget):
 		self.ownedPlayers=[]
 		self.budget=budget
+		self.adaptivity=random.random()+1
 	def getBoughtPlayers(self):
 		return []
 	def buyPlayer(self,player,price):
@@ -35,12 +36,17 @@ class bidder:
 
 	def correctValueOfPlayer(self,playerName,correction):
 		self.values[playerName]+=correction
+		if self.values[playerName]<1:
+			self.values[playerName]=1
 
-	
 	def correctValueOfPlayers(self,winner,learning_rate):
 		for playerName in self.values.keys():
-			self.values[playerName]+=(winner.getValueOfPlayers()[playerName]-self.values[playerName])*learning_rate
-		
+			self.values[playerName]+=(winner.getValueOfPlayers()[playerName]-self.values[playerName])*(self.adaptivity)
+			if self.values[playerName]<1:
+				self.values[playerName]=1
+			if self.values[playerName]>self.budget:
+				self.values[playerName]=self.adaptivity*self.budget
+				
 	def randomlyCorrectValueOfPlayers(self,learning_rate,budget):
 		oldPrice=0
 		for playerName in self.values.keys():
@@ -54,11 +60,12 @@ class bidder:
 
 	def resetOwnedPlayers(self):
 		self.ownedPlayers=[]
+
 	def randomizeEvaluation(self,playersList):
 		evals={}
-		currEval=random.random()
+		currEval=(random.random()+1)*100
 		for player in playersList:
-			currEval+=random.random()/10
+			currEval+=random.random()+1
 			evals[player.getName()]=currEval
 		self.values=evals
 

@@ -1,3 +1,4 @@
+set Bidders= 1..8 by 1;
 set Players;
 set Roles;
 set CompatibilityPlayerRole within {Players,Roles};
@@ -5,22 +6,27 @@ set CompatibilityPlayerRole within {Players,Roles};
 param performance{Players};
 param cost{Players};
 param budget;
-param alreadyBought{Players};
+param alreadyBought{Players} binary;
 
 param maxPlayers{Roles};
-var buy{Players} binary;
+var buy{Bidders,Players} binary;
+var perf{Bidders};
+var minPerf;
+
+maximize mp:minPerf;
 
 
-maximize perf: sum{player in Players}performance[player]*buy[player];
+s.t. budgetConstraint{bidder in Bidders}:
+	sum{player in Players} buy[bidder,player]*cost[player]<=budget;
 
+s.t. maxPlayersConstraint {role in Roles,bidder in Bidders}:
+	sum{(player,role) in CompatibilityPlayerRole} buy[bidder,player] <=maxPlayers[role];
 
-s.t. budgetConstraint:
-	sum{player in Players} buy[player]*cost[player]<=budget;
+s.t. playersCanHaveAtMostOneOwner{player in Players}:
+	sum{bidder in Bidders} buy[bidder,player]<=1;
 
-s.t. maxPlayersConstraint {role in Roles}:
-	sum{(player,role) in CompatibilityPlayerRole} buy[player] <=maxPlayers[role];
+s.t. definitionOfPerformance{bidder in Bidders}:
+	perf[bidder]= sum{player in Players}performance[player]*buy[bidder,player];
 
-
-s.t. playersCannobBeBoughtTwice{player in Players}:
-	buy[player]<=1-alreadyBought[player];
-
+s.t. definitionOfMinPerf{bidder in Bidders}:
+	minPerf<=perf[bidder];

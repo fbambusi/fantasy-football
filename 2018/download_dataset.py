@@ -4,19 +4,19 @@ import csv
 import os
 import csv
 
-EXCEL_NAME="dataset/day"
-CSV_NAME="dataset/day"
-FULL_DATASET_NAME="dataset/all_days2.csv"
-DAYS="dataset/all_days_with_fantasy_evaluation.csv"
-TMP_DATASET_NAME="dataset/all_days_tmp.csv"
-BASIC_FANGAZZETTA_EVALUATIONS="dataset/quotazioni.csv"
-PLAYER_SYNTHESIS="dataset/players_synthesis_by_me.csv"
-TEAM_NAME="dataset/player_teams.csv"
-SYNTHESIS_FILE_NAME="dataset/players_with_fantasy_evaluation.csv"
-SYNTHESIS_QUOTATION_FILE="dataset/synthesis_with_quotations.csv"
-MANTRA_FILE="dataset/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
+EXCEL_NAME="dataset2019/day"
+CSV_NAME="dataset2019/day"
+FULL_dataset2019_NAME="dataset2019/all_days2.csv"
+DAYS="dataset2019/all_days_with_fantasy_evaluation.csv"
+TMP_dataset2019_NAME="dataset2019/all_days_tmp.csv"
+BASIC_FANGAZZETTA_EVALUATIONS="dataset2019/quotazioni.csv"
+PLAYER_SYNTHESIS="dataset2019/players_synthesis_by_me.csv"
+TEAM_NAME="dataset2019/player_teams.csv"
+SYNTHESIS_FILE_NAME="dataset2019/players_with_fantasy_evaluation.csv"
+SYNTHESIS_QUOTATION_FILE="dataset2019/synthesis_with_quotations.csv"
+MANTRA_FILE="dataset2019/Quotazioni_Fantacalcio_Ruoli_Mantra.csv"
 
-LIKELY_FORMATIONS="dataset/likely_formations.html"
+LIKELY_FORMATIONS="dataset2019/likely_formations.html"
 
 SHEET_NAME="Fantagazzetta"
 HEADERS='"Cod.","Ruolo","Nome","Voto","Gf","Gs","Rp","Rs","Rf","Au","Amm","Esp","Ass","Asf","Gdv","Gdp","Day","FantasyEvaluation","Year"'
@@ -38,7 +38,7 @@ SYNTHESIS_KEYS_WEIGHTED.append("WeightedFantasyEvaluation")
 SYNTHESIS_KEYS_RECENT=SYNTHESIS_KEYS_WEIGHTED
 SYNTHESIS_KEYS_RECENT.append("Qt..A")
 SYNTHESIS_KEYS_RECENT.append("Qt..I")
-SYNTHESIS_KEYS_RECENT.append("Plays2018_2019")
+SYNTHESIS_KEYS_RECENT.append("Plays2019_2020")
 
 
 BID_HEADERS=SYNTHESIS_KEYS_RECENT
