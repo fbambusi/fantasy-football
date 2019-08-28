@@ -3,7 +3,7 @@ set Roles;
 set Modules;
 
 set CompatibilityPlayerRole within {Players,Roles};
-set Slots=1..25 by 1;
+set Slots=1..29 by 1;
 set CompatibilitySlotRole within {Modules,Slots,Roles};
 
 param multiplier{Modules,Slots} default 1;
@@ -23,6 +23,8 @@ var minPerf;
 param perfBigM=10000;
 
 param budget default 500;
+
+param minPlayersInRole{Roles} default 2;
 
 maximize mp:minPerf;
 
@@ -59,3 +61,6 @@ s.t. boughtPlayersMustBeUsed{player in Players}:
 
 s.t. budgetConstraint:
 	sum{player in Players}buy[player]*cost[player]<=budget;
+
+s.t. minNumberOfPlayersInRole{role in Roles}:
+	sum{(player,role) in CompatibilityPlayerRole}buy[player]>=minPlayersInRole[role];
