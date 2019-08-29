@@ -1,0 +1,11 @@
+set Roles:=A D P C;
+
+
+
+param :maxPlayers :=
+A 3
+D 4 
+P 1
+C 4
+;
+
