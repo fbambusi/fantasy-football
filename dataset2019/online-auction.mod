@@ -3,7 +3,7 @@ set Roles;
 set Modules;
 
 set CompatibilityPlayerRole within {Players,Roles};
-set Slots=1..29 by 1;
+set Slots=1..32 by 1;
 set CompatibilitySlotRole within {Modules,Slots,Roles};
 
 param multiplier{Modules,Slots} default 1;
